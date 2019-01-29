@@ -58,9 +58,9 @@ public class ImprovedMechTest extends LinearOpMode {
     }
 
     public void moveRobot() {
-        double drive = -gamepad1.left_stick_y / 2;
-        double strafe = -gamepad1.left_stick_x / 2;
-        double turn = (-gamepad1.right_stick_x / 1.2) / turnConstant;
+        double drive = -gamepad1.left_stick_y;
+        double strafe = gamepad1.left_stick_x;
+        double turn = gamepad1.right_stick_x / turnConstant;
 
         if (drive > 0.1 && (previousDrive == controllerPos.DRIVE_FOWARD || previousDrive == controllerPos.ZERO)) {
             previousDrive = controllerPos.DRIVE_FOWARD;
@@ -92,10 +92,10 @@ public class ImprovedMechTest extends LinearOpMode {
     }
     public void Strafe(int strafedirection) {
 
+        double FLpower = -1 * strafedirection * strafepower;
         double FRpower = strafedirection * strafepower;
-        double BLpower = strafedirection * strafepower;
         double BRpower = -1 * strafedirection * strafepower;
-        double FLpower = -1 * strafedirection * strafepower ;
+        double BLpower = strafedirection * strafepower ;
 
         FLpower = Range.clip(FLpower, -1.0, 1.0) ;
         BRpower = Range.clip(BRpower, -1.0, 1.0) ;
@@ -117,10 +117,10 @@ public class ImprovedMechTest extends LinearOpMode {
     public void Drive(double drivePower) {
         drivePower = readjustMotorPower(drivePower);
         drivePower = Range.clip(drivePower, -1.0, 1.0);
-        FL.setPower(drivePower);
-        BL.setPower(-drivePower);
+        BL.setPower(drivePower);
         FR.setPower(drivePower);
-        BR.setPower(-drivePower); //can make this an else
+        FL.setPower(drivePower);
+        BR.setPower(drivePower); //can make this an else
         telemetry.addData("Motors", "drive power (%.2f)", drivePower);
         telemetry.update();
     }
@@ -155,7 +155,7 @@ public class ImprovedMechTest extends LinearOpMode {
 
     public void intake() {
         if(gamepad2.dpad_up) {
-            pivot.setPower(.9);
+            pivot.setPower(1);
         } else if(gamepad2.dpad_down) {
             pivot.setPower(-.6);
         } else {
@@ -163,9 +163,9 @@ public class ImprovedMechTest extends LinearOpMode {
         }
 
         if (gamepad2.right_bumper) {
-            nom.setPower(.6);
+            nom.setPower(.9);
         } else if (gamepad2.left_bumper) {
-            nom.setPower(-.6);
+            nom.setPower(-.9);
         } else {
             nom.setPower(0);
         }
