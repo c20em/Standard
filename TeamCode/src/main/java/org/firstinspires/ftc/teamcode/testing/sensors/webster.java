@@ -20,7 +20,7 @@ public class webster {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    String pos;
+    int pos;
 
     public webster(WebcamName web) {
         /*
@@ -84,21 +84,21 @@ public class webster {
                     if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                         if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                             opMode.telemetry.addData("Gold Mineral Position", "Left");
-                            pos = "left";
+                            pos = -1;
                         } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
                             opMode.telemetry.addData("Gold Mineral Position", "Right");
-                            pos = "right";
+                            pos = 1;
                         } else {
                             opMode.telemetry.addData("Gold Mineral Position", "Center");
-                            pos = "center";
+                            pos = 0;
                         }
                     }
                 }
                 opMode.telemetry.update();
             }
         }
-        pos = "nope";
+        pos = -3;
     }
 
-    public String getPos() { return pos; }
+    public int getPos() { return pos; }
 }

@@ -17,6 +17,6 @@ public class zone extends autonomous {
     }
 
     public void run() {
-        robot.rotate(Math.PI/2, 1, 100000, this);
+        rotate(Math.PI/2, 1, 100000);
     }
 }

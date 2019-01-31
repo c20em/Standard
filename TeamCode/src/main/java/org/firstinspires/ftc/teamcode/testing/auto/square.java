@@ -20,10 +20,6 @@ public class square extends autonomous{
     }
 
     public void run() {
-        telemetry.addLine("running");
-        telemetry.update();
-        moveTicks(1, 0, 10000, 10000);
-        sleep(1000);
-        robot.stop();
+        moveTicks(.5, 0, 10000, 10000);
     }
 }

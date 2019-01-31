@@ -15,8 +15,11 @@ import org.firstinspires.ftc.teamcode.testing.sensors.webster;
 
 public class driving {
     private int encoder = 0;
-    private int maxLiftPos = 0; // add value! equivalent to 6 secs
+    private int maxLiftPos = 8000; // add value! equivalent to 6 secs
     private int liftTicks = 0;
+    private static final int maxArmPos = 0;
+    private static final int maxSpoolPos = 0;
+
 
     private DcMotor fl;
     private DcMotor bl;
@@ -68,7 +71,7 @@ public class driving {
             imu = new Gyro(hwmap.get(BNO055IMU.class, "imu"));
         }
         if(initvision) {
-            web = new webster(hwmap.get(WebcamName.class, "Webcam 1"));
+            web = new webster(hwmap.get(WebcamName.class, "webbie"));
             web.initTfod(hwmap);
         }
     }
@@ -139,35 +142,6 @@ public class driving {
     public int getMaxLiftPos() { return maxLiftPos; }
 
     public void setHook(int pow) { hook.setPower(pow); }
-
-    public void rotate(double degs, double pow, int timeout, LinearOpMode opmode) {
-        imu.resetHeading();
-        long startTime = System.currentTimeMillis();
-        long currentTime = startTime;
-//        double currentAngle = imu.heading();
-//        double newPow = pow;
-//
-//        while(currentTime - startTime < timeout && opmode.opModeIsActive() && Math.abs(degs) > Math.abs(currentAngle)) {
-//            drive(Range.clip(degs, -1, 1) * newPow,-Range.clip(degs, -1, 1) * newPow,
-//                    Range.clip(degs, -1, 1) * newPow, -Range.clip(degs, -1, 1) * newPow);
-//            newPow = map(Math.abs(degs) - Math.abs(currentAngle), 0, Math.abs(degs), .2, fpow);
-//            imu.update();
-//            currentAngle = imu.heading();
-//            currentTime = System.currentTimeMillis();
-//        }
-        imu.update();
-        move(0, 0, pow);
-        opmode.telemetry.addLine("turning");
-        opmode.telemetry.update();
-        while(opmode.opModeIsActive() && Math.abs(imu.heading()) < Math.abs(degs)) {
-            opmode.telemetry.addData("degs", degs);
-            opmode.telemetry.addData("heading", imu.heading());
-            opmode.telemetry.update();
-        }
-
-
-        stop();
-    }
 
     public double map(double x, double in_min, double in_max, double out_min, double out_max) {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
