@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.testing.chassis.driving;
 
-@TeleOp(group="Linear OpMode", name="drive")
+@TeleOp(group="Linear OpMode", name="testdrive")
 public class testDrive extends LinearOpMode {
     driving robot = new driving();
     @Override

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.testing.chassis.driving;
 
 public abstract class autonomous extends LinearOpMode{
@@ -34,7 +35,7 @@ public abstract class autonomous extends LinearOpMode{
     public void mineralLoc(int timeout) {
         long startTime = System.currentTimeMillis();
         long currentTime = startTime;
-        while(timeout < currentTime - startTime && opModeIsActive() && finalPos == -3) {
+        while(timeout > currentTime - startTime && opModeIsActive() && finalPos == -3) {
             robot.web.position(this);
             finalPos = robot.web.getPos();
         }
@@ -43,8 +44,12 @@ public abstract class autonomous extends LinearOpMode{
     public void deploy(int timeout) {
         long startTime = System.currentTimeMillis();
         long currentTime = startTime;
+        robot.resetLiftTicks();
+        robot.setHook(1);
         while(opModeIsActive() && timeout > currentTime - startTime && robot.getMaxLiftPos() < robot.getLiftTicks()) {
-            robot.setHook(1);
+            currentTime = System.currentTimeMillis();
+            telemetry.addLine("deploying");
+            telemetry.update();
         }
         robot.setHook(0);
         rotate(Math.PI/2, 1, 5000);

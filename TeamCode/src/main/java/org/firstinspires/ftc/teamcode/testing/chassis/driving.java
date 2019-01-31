@@ -77,10 +77,18 @@ public class driving {
     }
 
     public void drive(double FL, double FR, double BL, double BR) {
-        fl.setPower(FL);
-        fr.setPower(FR);
-        bl.setPower(BL);
-        br.setPower(BR);
+        fl.setPower(readjust(FL));
+        fr.setPower(readjust(FR));
+        bl.setPower(readjust(BL));
+        br.setPower(readjust(BR));
+    }
+
+    public void drive(double pow) {
+        pow = readjust(pow);
+        fl.setPower(pow);
+        fr.setPower(pow);
+        bl.setPower(pow);
+        br.setPower(pow);
     }
 
     public void move(double pow, double angle, double rot) {
@@ -141,9 +149,33 @@ public class driving {
 
     public int getMaxLiftPos() { return maxLiftPos; }
 
-    public void setHook(int pow) { hook.setPower(pow); }
+    public void setHook(double pow) { hook.setPower(pow); }
+
+    public void setNom(double pow) { nom.setPower(pow); }
+
+    public void setPivot(double pow) { pivot.setPower(pow); }
+
+    public void setExtend(double pow) { extend.setPower(pow); }
 
     public double map(double x, double in_min, double in_max, double out_min, double out_max) {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+
+    public double readjust(double min, double max, double val) {
+        if(Math.abs(val) < min && val < 0) {
+            return -min;
+        } else if(Math.abs(val) < min && val > 0) {
+            return min;
+        } else if(Math.abs(val) > max && val < 0) {
+            return -max;
+        } else if(Math.abs(val) > max && val > 0){
+            return max;
+        } else {
+            return val;
+        }
+    }
+
+    public double readjust(double val) {
+        return readjust(.3, 1, val);
     }
 }
