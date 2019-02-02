@@ -31,7 +31,7 @@ public class pit extends autonomous {
         mineralLoc(5000);
         telemetry.addData("mineral pos", robot.web.getPos());
         telemetry.update();
-        deploy(6000);
+        deploy( 6000);
         hitMineral();
 
     }

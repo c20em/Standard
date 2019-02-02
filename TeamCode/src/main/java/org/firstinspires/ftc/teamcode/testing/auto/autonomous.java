@@ -9,8 +9,11 @@ import org.firstinspires.ftc.teamcode.testing.chassis.driving;
 
 public abstract class autonomous extends LinearOpMode{
     driving robot;
-    int finalPos = -3;
 
+    /**
+     * initializes robot
+     * @throws InterruptedException
+     */
     public void setup() throws InterruptedException {
         telemetry.addLine("setup running");
         telemetry.update();
@@ -18,6 +21,13 @@ public abstract class autonomous extends LinearOpMode{
         robot.init(hardwareMap, true, true);
     }
 
+    /**
+     * uses encoder to move ticks forwards or backwards relative to initial heading
+     * @param pow
+     * @param angle to move in relation to forwards direction
+     * @param ticks number of ticks (related to rotations of the motor) to move
+     * @param timeout
+     */
     public void moveTicks(double pow, double angle, int ticks, int timeout) {
         robot.resetTicks();
         long startTime = System.currentTimeMillis();
@@ -32,15 +42,24 @@ public abstract class autonomous extends LinearOpMode{
         robot.stop();
     }
 
+    /**
+     * uses webcam object in order to attempt to detect the minerals, until timeout or mineral
+     * detected
+     * @param timeout
+     */
     public void mineralLoc(int timeout) {
         long startTime = System.currentTimeMillis();
         long currentTime = startTime;
-        while(timeout > currentTime - startTime && opModeIsActive() && finalPos == -3) {
-            robot.web.position(this);
-            finalPos = robot.web.getPos();
+        while(timeout > currentTime - startTime && opModeIsActive() && robot.web.getPos() == -2) {
+            robot.web.checkPos(this);
+            currentTime = System.currentTimeMillis();
         }
     }
 
+    /**
+     * unlatches for a certain number of ticks, or until time expires
+     * @param timeout
+     */
     public void deploy(int timeout) {
         long startTime = System.currentTimeMillis();
         long currentTime = startTime;
@@ -48,48 +67,57 @@ public abstract class autonomous extends LinearOpMode{
         robot.setHook(1);
         while(opModeIsActive() && timeout > currentTime - startTime && robot.getMaxLiftPos() < robot.getLiftTicks()) {
             currentTime = System.currentTimeMillis();
+            telemetry.addData("distanceFromEnd", robot.getLiftTicks() - robot.getMaxLiftPos());
             telemetry.addLine("deploying");
             telemetry.update();
         }
         robot.setHook(0);
-        rotate(Math.PI/2, 1, 5000);
+        rotate(-Math.PI/2, 1, 5000);
         robot.stop();
     }
 
+    /**
+     * samples mineral depending on predetermined location, rotates then moves if on the left or
+     * right, moves forwards if in the center or unknown
+     */
     public void hitMineral() {
-        if(finalPos == -3 || finalPos == 0) {
+        if(robot.web.getPos() == -2 || robot.web.getPos() == 0) {
             moveTicks(1, 0, 1000, 5000);
         } else {
-            rotate(Math.PI/2 * finalPos, 1, 1000);
+            rotate(Math.PI/2 * robot.web.getPos(), 1, 1000);
             moveTicks(1, 0, 1000, 5000);
         }
     }
 
-    public void rotate(double degs, double pow, int timeout) {
+    /**
+     * rotates a certain amount of radians depending on the current angle, if the time exceeds the
+     * maximum amount of time or op mode is stopped the robot stops moving
+     * @param rads radians to turn
+     * @param pow
+     * @param timeout milliseconds before exiting unless angle reached before then
+     */
+    public void rotate(double rads, double pow, int timeout) {
         robot.imu.resetHeading();
         long startTime = System.currentTimeMillis();
         long currentTime = startTime;
-//        double currentAngle = imu.heading();
-//        double newPow = pow;
-//
-//        while(currentTime - startTime < timeout && opmode.opModeIsActive() && Math.abs(degs) > Math.abs(currentAngle)) {
-//            drive(Range.clip(degs, -1, 1) * newPow,-Range.clip(degs, -1, 1) * newPow,
-//                    Range.clip(degs, -1, 1) * newPow, -Range.clip(degs, -1, 1) * newPow);
-//            newPow = map(Math.abs(degs) - Math.abs(currentAngle), 0, Math.abs(degs), .2, fpow);
-//            imu.update();
-//            currentAngle = imu.heading();
-//            currentTime = System.currentTimeMillis();
-//        }
         robot.imu.update();
-        robot.move(0, 0, pow);
+        if(rads < 0) {
+            robot.move(0,  0, -pow);
+        } else {
+            robot.move(0, 0, pow);
+        }
         telemetry.addLine("turning");
         telemetry.update();
-        while(opModeIsActive() && Math.abs(robot.imu.heading()) < Math.abs(degs) && currentTime - startTime < timeout) {
-            telemetry.addData("degs", degs);
+        while(opModeIsActive() && Math.abs(robot.imu.heading()) < Math.abs(rads) && currentTime - startTime < timeout) {
+            telemetry.addData("rads", rads);
             telemetry.addData("heading", robot.imu.heading());
             telemetry.update();
             currentTime = System.currentTimeMillis();
         }
         stop();
+    }
+
+    public void dropMarker() {
+        robot.markerOut();
     }
 }

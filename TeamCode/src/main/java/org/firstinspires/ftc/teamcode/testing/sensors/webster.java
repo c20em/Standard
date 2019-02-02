@@ -20,7 +20,7 @@ public class webster {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    int pos;
+    int pos = -2;
 
     public webster(WebcamName web) {
         /*
@@ -61,7 +61,7 @@ public class webster {
 
     public void shutdownTfod() { tfod.shutdown(); }
 
-    public void position(LinearOpMode opMode) {
+    public int position(LinearOpMode opMode) {
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
@@ -75,6 +75,7 @@ public class webster {
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                             goldMineralX = (int) recognition.getLeft();
+                            recognition.getLeft();
                         } else if (silverMineral1X == -1) {
                             silverMineral1X = (int) recognition.getLeft();
                         } else {
@@ -84,21 +85,65 @@ public class webster {
                     if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                         if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                             opMode.telemetry.addData("Gold Mineral Position", "Left");
-                            pos = -1;
+                            return -1;
                         } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
                             opMode.telemetry.addData("Gold Mineral Position", "Right");
-                            pos = 1;
+                            return 1;
                         } else {
                             opMode.telemetry.addData("Gold Mineral Position", "Center");
-                            pos = 0;
+                            return 0;
                         }
                     }
+                } if(updatedRecognitions.size() == 2) {
+                    int goldMineral = -1;
+                    int silverMineral = -1;
+                    int otherSilverMineral = -1;
+                        for(Recognition recognition : updatedRecognitions) {
+                            if(recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                                if(recognition.getLeft() < recognition.getImageWidth()/3) {
+                                    goldMineral = 0;
+                                } else if(recognition.getLeft() < recognition.getImageWidth()*2/3) {
+                                    goldMineral = 1;
+                                } else {
+                                    goldMineral = 2;
+                                }
+                            } else if(silverMineral == -1) {
+                                if(recognition.getLeft() < recognition.getImageWidth()/3) {
+                                    silverMineral = 0;
+                                } else if(recognition.getLeft() < recognition.getImageWidth()*2/3) {
+                                    silverMineral = 1;
+                                } else {
+                                    silverMineral = 2;
+                                }
+                            } else {
+                                if(recognition.getLeft() < recognition.getImageWidth()/3) {
+                                    otherSilverMineral = 0;
+                                } else if(recognition.getLeft() < recognition.getImageWidth()*2/3) {
+                                    otherSilverMineral = 1;
+                                } else {
+                                    otherSilverMineral = 2;
+                                }
+                            }
+                        }
+
+                        if(goldMineral == 0 && silverMineral == 1) {
+                            return -1;
+                        } else if(goldMineral == 1 && silverMineral == 0) {
+                            return 0;
+                        } else if(otherSilverMineral != -1) {
+                            return 1;
+                        } else if(goldMineral == 0) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
                 }
                 opMode.telemetry.update();
             }
         }
-        pos = -3;
+        return -3;
     }
+    public void checkPos(LinearOpMode opMode) { pos = position(opMode); }
 
     public int getPos() { return pos; }
 }
