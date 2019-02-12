@@ -19,6 +19,9 @@ public abstract class autonomous extends LinearOpMode{
         telemetry.update();
         robot = new driving();
         robot.init(hardwareMap, true, true);
+        robot.markerIn();
+        telemetry.addLine("setu up done");
+        telemetry.update();
     }
 
     /**
@@ -50,7 +53,7 @@ public abstract class autonomous extends LinearOpMode{
     public void mineralLoc(int timeout) {
         long startTime = System.currentTimeMillis();
         long currentTime = startTime;
-        while(timeout > currentTime - startTime && opModeIsActive() && robot.web.getPos() == -2) {
+        while(timeout > currentTime - startTime && opModeIsActive() && robot.web.getPos() == -3) {
             robot.web.checkPos(this);
             currentTime = System.currentTimeMillis();
         }
@@ -65,27 +68,48 @@ public abstract class autonomous extends LinearOpMode{
         long currentTime = startTime;
         robot.resetLiftTicks();
         robot.setHook(1);
-        while(opModeIsActive() && timeout > currentTime - startTime && robot.getMaxLiftPos() < robot.getLiftTicks()) {
+        while(opModeIsActive() && timeout > currentTime - startTime && robot.getMaxLiftPos() > robot.getLiftTicks()) {
             currentTime = System.currentTimeMillis();
             telemetry.addData("distanceFromEnd", robot.getLiftTicks() - robot.getMaxLiftPos());
             telemetry.addLine("deploying");
             telemetry.update();
         }
         robot.setHook(0);
-        rotate(-Math.PI/2, 1, 5000);
-        robot.stop();
+//        rotate(-Math.PI/2, 1, 5000);
     }
 
     /**
      * samples mineral depending on predetermined location, rotates then moves if on the left or
-     * right, moves forwards if in the center or unknown
+     * right, moves forwards if in the center or unknown, right now is specific for zone not crater
      */
     public void hitMineral() {
-        if(robot.web.getPos() == -2 || robot.web.getPos() == 0) {
-            moveTicks(1, 0, 1000, 5000);
+        if(robot.web.getPos() == -3 || robot.web.getPos() == 0) {
+            moveTicks(.5, Math.PI, 700, 2500);
+            dropMarker();
+            rotate(Math.PI/4, .5, 1000);
+            moveTicks(1, -Math.PI/2, 700, 1000);
+            rotate(-Math.PI/3, .5, 1000);
+            moveTicks(1, 0, 10000, 4000);
+
         } else {
-            rotate(Math.PI/2 * robot.web.getPos(), 1, 1000);
-            moveTicks(1, 0, 1000, 5000);
+            rotate(Math.PI/6 * robot.web.getPos(), .5, 1000);
+            moveTicks(1, Math.PI, 500, 1000);
+            rotate(Math.PI/4 * -robot.web.getPos(), .5, 1000);
+            moveTicks(1, Math.PI, 500, 1000);
+
+            //untested ish
+            rotate(Math.PI/4+Math.PI/8*robot.web.getPos(), .5, 1000);
+            dropMarker();
+            sleep(500);
+            moveTicks(1, -Math.PI/2, 500, 1000);
+            moveTicks(1, -Math.PI, 100, 300);
+            rotate(-Math.PI/4, .5, 1000);
+            moveTicks(1, 0, 1000, 2000);
+            //untested ish
+//            rotate(Math.PI, .5, 2000);
+//            dropMarker();
+//            sleep(500);
+//            moveTicks(1, -Math.PI/2, 500, 1000);
         }
     }
 
@@ -97,6 +121,7 @@ public abstract class autonomous extends LinearOpMode{
      * @param timeout milliseconds before exiting unless angle reached before then
      */
     public void rotate(double rads, double pow, int timeout) {
+        //rads = rads/2; //idk why figure this out eventually
         robot.imu.resetHeading();
         long startTime = System.currentTimeMillis();
         long currentTime = startTime;
@@ -114,7 +139,7 @@ public abstract class autonomous extends LinearOpMode{
             telemetry.update();
             currentTime = System.currentTimeMillis();
         }
-        stop();
+        robot.stop();
     }
 
     public void dropMarker() {

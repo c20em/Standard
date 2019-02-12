@@ -9,6 +9,7 @@ public class pit extends autonomous {
     @Override
     public void runOpMode() throws InterruptedException {
         setup();
+        robot.markerIn();
         telemetry.addLine("waiting for start");
         telemetry.update();
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
@@ -26,13 +27,23 @@ public class pit extends autonomous {
     }
 
     public void run() {
-        telemetry.addLine("running");
-        telemetry.update();
+//        telemetry.addLine("running");
+//        telemetry.update();
+//        mineralLoc(5000);
+//        telemetry.addData("mineral pos", robot.web.getPos());
+//        telemetry.update();
+//        deploy( 6500);
+//        // hitMineral();
+//        telemetry.addData("gold mineral pos", robot.web.getPos());
+//        telemetry.update();
+//        sleep(1000);
+//        stop();
+        deploy(6500);
         mineralLoc(5000);
-        telemetry.addData("mineral pos", robot.web.getPos());
+        rotate(-Math.PI/2, .5, 5000);
+        telemetry.addData("loc", robot.web.getPos());
         telemetry.update();
-        deploy( 6000);
         hitMineral();
-
+        stop();
     }
 }

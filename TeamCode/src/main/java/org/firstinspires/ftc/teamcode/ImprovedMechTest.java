@@ -170,9 +170,9 @@ public class ImprovedMechTest extends LinearOpMode {
             nom.setPower(0);
         }
 
-        if(gamepad2.left_stick_y > .3) {
+        if(gamepad2.right_stick_y > .3) {
             extend.setPower(-.8);
-        } else if(gamepad2.left_stick_y < -.3) {
+        } else if(gamepad2.right_stick_y < -.3) {
             extend.setPower(.8);
         } else {
             extend.setPower(0);
@@ -180,9 +180,9 @@ public class ImprovedMechTest extends LinearOpMode {
     }
 
     public void hook() {
-        if(gamepad2.right_stick_y < -.3) {
+        if(gamepad2.left_stick_y < -.3) {
             hook.setPower(1);
-        } else if(gamepad2.right_stick_y > .3) {
+        } else if(gamepad2.left_stick_y > .3) {
             hook.setPower(-1);
         } else {
             hook.setPower(0);

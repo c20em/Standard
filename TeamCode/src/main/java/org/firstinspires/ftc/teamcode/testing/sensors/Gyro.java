@@ -27,8 +27,8 @@ public class Gyro {
         update();
         if(angles != null) {
             double h = angles.firstAngle - forwardHeading;
-//            if (h < -Math.PI) h += 2*Math.PI;
-//            if (h > Math.PI) h -= 2*Math.PI;
+            if (h < -Math.PI) h += 2*Math.PI;
+            if (h > Math.PI) h -= 2*Math.PI;
             return h;
         } else {
             return -3*Math.PI;

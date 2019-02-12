@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.testing.sensors.webster;
  */
 public class driving {
     private int encoder = 0;
-    private int maxLiftPos = -17181; // add value! equivalent to 6 secs
+    private int maxLiftPos = 17250; // add value! equivalent to 6 secs
     private int liftTicks = 0;
     private int pivotTicks = 0;
     private int spoolTicks = 0;
@@ -68,6 +68,8 @@ public class driving {
         fr.setDirection(DcMotor.Direction.FORWARD);
         br.setDirection(DcMotor.Direction.FORWARD);
         hook.setDirection(DcMotor.Direction.REVERSE);
+        pivot.setDirection(DcMotor.Direction.REVERSE);
+        extend.setDirection(DcMotor.Direction.REVERSE);
 
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -195,11 +197,12 @@ public class driving {
 
     // if the pivot motor
     public void setPivot(double pow) {
-        if ((getPivotTicks() < minArmPos && pow < 0) || (getPivotTicks() < 0 && pow > 0)) {
-            pivot.setPower(0);
-        } else {
-            pivot.setPower(pow);
-        }
+//        if ((getPivotTicks() < minArmPos && pow < 0) || (getPivotTicks() < 0 && pow > 0)) {
+//            pivot.setPower(0);
+//        } else {
+//            pivot.setPower(pow);
+//        }
+        pivot.setPower(pow);
     }
 
     public void setExtend(double pow) { extend.setPower(pow); }

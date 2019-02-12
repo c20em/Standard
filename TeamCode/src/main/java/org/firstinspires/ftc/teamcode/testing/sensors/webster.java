@@ -20,7 +20,7 @@ public class webster {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    int pos = -2;
+    int pos = -3;
 
     public webster(WebcamName web) {
         /*
@@ -66,78 +66,104 @@ public class webster {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
+            if(updatedRecognitions != null) {
                 opMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
-                if (updatedRecognitions.size() == 3) {
-                    int goldMineralX = -1;
-                    int silverMineral1X = -1;
-                    int silverMineral2X = -1;
-                    for (Recognition recognition : updatedRecognitions) {
-                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                            goldMineralX = (int) recognition.getLeft();
-                            recognition.getLeft();
-                        } else if (silverMineral1X == -1) {
-                            silverMineral1X = (int) recognition.getLeft();
-                        } else {
-                            silverMineral2X = (int) recognition.getLeft();
-                        }
-                    }
-                    if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                        if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                            opMode.telemetry.addData("Gold Mineral Position", "Left");
-                            return -1;
-                        } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                            opMode.telemetry.addData("Gold Mineral Position", "Right");
-                            return 1;
-                        } else {
-                            opMode.telemetry.addData("Gold Mineral Position", "Center");
-                            return 0;
-                        }
-                    }
-                } if(updatedRecognitions.size() == 2) {
+                if(updatedRecognitions.size() == 2) {
                     int goldMineral = -1;
-                    int silverMineral = -1;
-                    int otherSilverMineral = -1;
-                        for(Recognition recognition : updatedRecognitions) {
-                            if(recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                if(recognition.getLeft() < recognition.getImageWidth()/3) {
-                                    goldMineral = 0;
-                                } else if(recognition.getLeft() < recognition.getImageWidth()*2/3) {
-                                    goldMineral = 1;
-                                } else {
-                                    goldMineral = 2;
-                                }
-                            } else if(silverMineral == -1) {
-                                if(recognition.getLeft() < recognition.getImageWidth()/3) {
-                                    silverMineral = 0;
-                                } else if(recognition.getLeft() < recognition.getImageWidth()*2/3) {
-                                    silverMineral = 1;
-                                } else {
-                                    silverMineral = 2;
-                                }
-                            } else {
-                                if(recognition.getLeft() < recognition.getImageWidth()/3) {
-                                    otherSilverMineral = 0;
-                                } else if(recognition.getLeft() < recognition.getImageWidth()*2/3) {
-                                    otherSilverMineral = 1;
-                                } else {
-                                    otherSilverMineral = 2;
-                                }
-                            }
+                    int silverMineral1 = -1;
+                    int silverMineral2 = -1;
+                    for(Recognition recognition : updatedRecognitions) {
+                        if(recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                            goldMineral = (int) recognition.getLeft();
+                            recognition.getLeft();
+                        } else if(silverMineral1 == -1) {
+                            silverMineral1 = (int) recognition.getLeft();
+                        } else {
+                            silverMineral2 = (int) recognition.getLeft();
                         }
-
-                        if(goldMineral == 0 && silverMineral == 1) {
-                            return -1;
-                        } else if(goldMineral == 1 && silverMineral == 0) {
-                            return 0;
-                        } else if(otherSilverMineral != -1) {
+                    }
+                    if(goldMineral != -1) {
+                        if(goldMineral > silverMineral1) {
                             return 1;
-                        } else if(goldMineral == 0) {
-                            return -1;
                         } else {
                             return 0;
                         }
+                    } else {
+                        return -1;
+                    }
                 }
+//            if (updatedRecognitions != null) {
+//                opMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
+//                if (updatedRecognitions.size() == 3) {
+//                    int goldMineralX = -1;
+//                    int silverMineral1X = -1;
+//                    int silverMineral2X = -1;
+//                    for (Recognition recognition : updatedRecognitions) {
+//                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+//                            goldMineralX = (int) recognition.getLeft();
+//                            recognition.getLeft();
+//                        } else if (silverMineral1X == -1) {
+//                            silverMineral1X = (int) recognition.getLeft();
+//                        } else {
+//                            silverMineral2X = (int) recognition.getLeft();
+//                        }
+//                    }
+//                    if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+//                        if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
+//                            opMode.telemetry.addData("Gold Mineral Position", "Left");
+//                            return -1;
+//                        } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
+//                            opMode.telemetry.addData("Gold Mineral Position", "Right");
+//                            return 1;
+//                        } else {
+//                            opMode.telemetry.addData("Gold Mineral Position", "Center");
+//                            return 0;
+//                        }
+//                    }
+//                } if(updatedRecognitions.size() == 2) {
+//                    int goldMineral = -1;
+//                    int silverMineral = -1;
+//                    int otherSilverMineral = -1;
+//                        for(Recognition recognition : updatedRecognitions) {
+//                            if(recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+//                                if(recognition.getLeft() < recognition.getImageWidth()/3) {
+//                                    goldMineral = 0;
+//                                } else if(recognition.getLeft() < recognition.getImageWidth()*2/3) {
+//                                    goldMineral = 1;
+//                                } else {
+//                                    goldMineral = 2;
+//                                }
+//                            } else if(silverMineral == -1) {
+//                                if(recognition.getLeft() < recognition.getImageWidth()/3) {
+//                                    silverMineral = 0;
+//                                } else if(recognition.getLeft() < recognition.getImageWidth()*2/3) {
+//                                    silverMineral = 1;
+//                                } else {
+//                                    silverMineral = 2;
+//                                }
+//                            } else {
+//                                if(recognition.getLeft() < recognition.getImageWidth()/3) {
+//                                    otherSilverMineral = 0;
+//                                } else if(recognition.getLeft() < recognition.getImageWidth()*2/3) {
+//                                    otherSilverMineral = 1;
+//                                } else {
+//                                    otherSilverMineral = 2;
+//                                }
+//                            }
+//                        }
+//
+//                        if((goldMineral == 0 && silverMineral == 1) || (silverMineral == 1 && otherSilverMineral == 2)) {
+//                            return -1;
+//                        } else if(goldMineral == 1) {
+//                            return 0;
+//                        } else if(otherSilverMineral != -1) {
+//                            return 1;
+//                        } else if(goldMineral == 0) {
+//                            return -1;
+//                        } else {
+//                            return 0;
+//                        }
+//                }
                 opMode.telemetry.update();
             }
         }

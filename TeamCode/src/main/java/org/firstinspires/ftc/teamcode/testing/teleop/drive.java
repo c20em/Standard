@@ -142,7 +142,7 @@ public class drive extends LinearOpMode {
         hook beyond the initial height or below the minimum height
      */
     public void setHook(double pow) {
-        if((robot.getLiftTicks() > -robot.getMaxLiftPos() && pow < 0) || (robot.getLiftTicks() < 0 && pow > 0)) {
+        if((robot.getLiftTicks() < -robot.getMaxLiftPos() && pow < 0) || (robot.getLiftTicks() < 0 && pow > 0)) {
             robot.setHook(0);
         } else { robot.setHook(pow); }
     }
