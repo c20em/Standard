@@ -32,7 +32,7 @@ public class zone extends autonomous {
 //        robot.setExtend(0);
 //        stop();
         mineralLoc(5000);
-        deploy(6500);
+        deploy(6000);
         rotate(-Math.PI/2, .5, 5000);
         telemetry.addData("loc", robot.web.getPos());
         telemetry.update();

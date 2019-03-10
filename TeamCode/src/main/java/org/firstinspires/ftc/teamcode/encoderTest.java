@@ -11,7 +11,7 @@ public class encoderTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        motor = hardwareMap.get(DcMotor.class, "hook");
+        motor = hardwareMap.get(DcMotor.class, "fl");
         motor.setDirection(DcMotor.Direction.REVERSE);
         int ticks = motor.getCurrentPosition();
 
